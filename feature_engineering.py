@@ -27,8 +27,7 @@ def harbour_pipeline():
 def age_pipeline():
     return Pipeline([('age_interpolation', AgeImputer()),
                      ('age_imputer', SimpleImputer(strategy='median')),
-                     ('age_diskretizer', KBinsDiscretizer(n_bins=9,
-                                                          encode='onehot-dense',
+                     ('age_diskretizer', KBinsDiscretizer(encode='onehot-dense',
                                                           strategy='uniform'))])
 
 
@@ -93,12 +92,12 @@ def clf_pipe():
 
 def grid_parameters():
 
-    return {'ran_for_clf__n_estimators': [int(x) for x in np.linspace(start=50, stop=200, num=5)],
+    return {'ran_for_clf__n_estimators': [int(x) for x in np.linspace(start=50, stop=250, num=5)],
             'ran_for_clf__max_features': ['auto', 'sqrt'],
-            'ran_for_clf__max_depth': [None, 20, 40, 60],
+            'ran_for_clf__max_depth': [None, 20, 40, 60, 80],
             'ran_for_clf__min_samples_split': [2, 5, 10],
             'ran_for_clf__min_samples_leaf': [1, 2, 4],
-             'feature_engineering__age_pipe__age_diskretizer__n_bins': [6, 7, 8, 9]}
+            'feature_engineering__age_pipe__age_diskretizer__n_bins': [5, 6, 7, 8, 9, 10, 11, 12]}
 
 
 

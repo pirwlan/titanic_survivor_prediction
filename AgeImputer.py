@@ -27,7 +27,7 @@ class AgeImputer(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         for title in X['title'].unique():
-            self.title_median_age[title] = X[X['title'] == title]['Age'].median()
+            self.title_median_age[title] = X.loc[:][X['title'] == title]['Age'].median()
 
         self.impute_map_ = self.title_median_age
 
@@ -37,11 +37,9 @@ class AgeImputer(BaseEstimator, TransformerMixin):
         # make sure that the imputer was fitted
         check_is_fitted(self, 'impute_map_')
 
-        X = X.copy()
-
         # Seperate df in with and without age
-        X_o_age = X[X['Age'].isna()]
-        X_w_age = X[~X['Age'].isna()]
+        X_o_age = X[X['Age'].isna()].copy()
+        X_w_age = X[~X['Age'].isna()].copy()
 
         # Interpolate Age
         X_o_age['Age'] = X_o_age['title'].map(self.impute_map_)

@@ -34,41 +34,6 @@ def encode_title(df: pd.DataFrame) -> pd.DataFrame:
     return df_temp
 
 
-def get_feature_names_from_ColumnTransformer(column_transformer):
-    """
-    Gets feature names from Columntransformer
-
-    Args:
-        column_transformer: sklean.ColTransformer:
-            fitted Column Transformer
-
-    Returns:
-        col_names: list
-            list of feature names
-
-    """
-    col_name = []
-    for idx, feature_pipe in enumerate(
-            column_transformer.transformers_[:-1]):  # the last transformer is ColumnTransformer's 'remainder'
-        raw_col_name = feature_pipe[2]
-        transformer_type = column_transformer.transformers_[:-1][idx][1].steps[-1][0].split('_')[1]
-
-        if transformer_type == 'diskretizer':
-
-            bin_edges = feature_pipe[1].steps[-1][-1].bin_edges_[0]
-            for idx, bin_edge in enumerate(bin_edges):
-                if idx == len(bin_edges) - 1:
-                    break
-                else:
-                    col_name.append(f'{raw_col_name[0]}-{bin_edge:.2f}_{bin_edges[idx + 1]:.2f}')
-
-        elif transformer_type == 'onehot':
-            feature_names = (feature_pipe[1][-1].get_feature_names())
-            col_name.extend(feature_names)
-
-    return col_name
-
-
 def evaluate_summary(model):
 
     summary = model.cv_results_
@@ -82,15 +47,16 @@ def evaluate_summary(model):
 
 def verify_folder_existence(path):
     try:
-        os.makedir(path)
+        os.mkdir(path)
 
     except FileExistsError:
         pass
 
 
-
 def create_submission(best_model, df_train, df_test):
-
+    """
+    creates submission file for Kaggle competiton
+    """
     submission_path = os.path.join(os.getcwd(), 'submission')
     verify_folder_existence(submission_path)
 
